@@ -1,0 +1,33 @@
+name: Example proposal
+description: Propose a bounded Weka workflow for this repository.
+title: "[Example]: "
+labels: ["example"]
+body:
+  - type: input
+    id: decision
+    attributes:
+      label: Decision
+      description: What single bounded decision should Weka return?
+    validations:
+      required: true
+  - type: textarea
+    id: state
+    attributes:
+      label: Input state
+      description: List the current, redacted evidence supplied to Weka.
+    validations:
+      required: true
+  - type: textarea
+    id: policy
+    attributes:
+      label: Application policy
+      description: Explain thresholds, deterministic checks, and the low-confidence fallback.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: How can maintainers test this without production access?
+    validations:
+      required: true

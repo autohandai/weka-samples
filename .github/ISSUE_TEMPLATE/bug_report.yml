@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a reproducible problem in an example or the shared client.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report this.
+  - type: input
+    id: example
+    attributes:
+      label: Example or file
+      placeholder: example:release or src/weka.ts
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Redact API keys, request bodies, customer data, and production logs.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: Include the command, Bun version, and operating system.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets and private data from this report.
+          required: true

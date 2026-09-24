@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Weka documentation
+    url: https://docs.autohand.ai/models/weka/
+    about: Read the current Weka request contract and product guidance.

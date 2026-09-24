@@ -1,0 +1,30 @@
+{
+  "name": "weka-samples",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Runnable Weka decision-model examples for software delivery, data quality, and research workflows.",
+  "scripts": {
+    "check": "bun run typecheck && bun test",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "example:release": "bun run src/examples/release-gate.ts",
+    "example:ci": "bun run src/examples/triage-ci-failure.ts",
+    "example:patch": "bun run src/examples/judge-patch.ts",
+    "example:tests": "bun run src/examples/prioritize-tests.ts",
+    "example:data": "bun run src/examples/validate-data-contract.ts",
+    "example:research": "bun run src/examples/rank-evidence.ts",
+    "example:agent": "bun run src/examples/agent-assisted-release-gate.ts"
+  },
+  "dependencies": {
+    "@autohandai/agent-sdk": "^1.0.5"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
