@@ -1,5 +1,4 @@
-import { Agent } from '@autohandai/agent-sdk';
-import { decide } from '../weka.js';
+import { Agent, WekaClient } from '@autohandai/agent-sdk';
 
 type ReleaseEvidence = {
   summary: string;
@@ -48,5 +47,5 @@ const questions = {
   },
 } as const;
 
-const result = await decide({ model: 'weka', state: evidence, questions });
+const result = await new WekaClient().decide({ model: 'weka', state: evidence, questions });
 console.log(JSON.stringify({ evidence, decision: result.answers.release_lane }, null, 2));

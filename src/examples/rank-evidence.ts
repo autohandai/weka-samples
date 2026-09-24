@@ -1,4 +1,4 @@
-import { decide, type WekaQuestions } from '../weka.js';
+import { WekaClient, type WekaQuestions } from '@autohandai/agent-sdk';
 
 const evidence = [
   { id: 'release', kind: 'primary', date: '2026-09-01', excerpt: 'Version 2.4 removes the legacy endpoint.' },
@@ -11,9 +11,14 @@ const questions = {
     `relevance_${item.id}`,
     {
       type: 'score',
-      instructions: `Score how directly ${item.id} answers the research question from 0 to 100.`,
-      min: 0,
-      max: 100,
+      instructions: `Score how directly ${item.id} answers the research question against the ordered anchors.`,
+      criteria: [
+        'Does not answer the research question.',
+        'Only indirectly relevant.',
+        'Useful supporting evidence.',
+        'Directly answers an important part of the question.',
+        'Direct, current, authoritative evidence for the answer.',
+      ],
     },
   ])),
   sufficient_evidence: {
@@ -22,7 +27,7 @@ const questions = {
   },
 } as WekaQuestions;
 
-const result = await decide({
+const result = await new WekaClient().decide({
   model: 'weka',
   state: {
     question: 'Is the legacy endpoint available in version 2.4?',

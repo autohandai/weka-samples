@@ -1,4 +1,4 @@
-import { decide, type WekaQuestions } from '../weka.js';
+import { WekaClient, type WekaQuestions } from '@autohandai/agent-sdk';
 
 const candidates = [
   { id: 'checkout-unit', costSeconds: 18, covers: ['price', 'discount'] },
@@ -10,13 +10,18 @@ const questions = Object.fromEntries(candidates.map((test) => [
   `priority_${test.id.replaceAll('-', '_')}`,
   {
     type: 'score',
-    instructions: `Score how useful ${test.id} is for this change from 0 to 100.`,
-    min: 0,
-    max: 100,
+    instructions: `Score how useful ${test.id} is for this change against the ordered anchors.`,
+    criteria: [
+      'No useful coverage for this change.',
+      'Weak indirect coverage.',
+      'Useful supporting coverage.',
+      'Strong direct coverage.',
+      'Highest-priority coverage for the changed behavior.',
+    ],
   },
 ])) as WekaQuestions;
 
-const result = await decide({
+const result = await new WekaClient().decide({
   model: 'weka',
   state: {
     changedFiles: ['src/checkout/price.ts'],
