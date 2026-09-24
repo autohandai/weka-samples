@@ -37,13 +37,18 @@ Bun loads `.env` automatically. You can also export `AUTOHAND_API_KEY` in your s
 | `bun run example:research` | Rank evidence and check whether it is sufficient |
 | `bun run example:agent` | Gather repository evidence with the Code Agent SDK, then ask Weka for a release lane |
 
-Every direct example uses the typed client in [`src/weka.ts`](./src/weka.ts). It has no runtime dependency beyond `fetch`, validates the top-level response shape, applies a timeout, and avoids printing response bodies when a request fails.
+Every direct example uses `WekaClient` from `@autohandai/agent-sdk` 1.1 or
+newer. The SDK validates the complete request and response contract, applies a
+timeout, and avoids printing response bodies when a request fails.
 
 ## Weka and the Code Agent SDK
 
-The current [`@autohandai/agent-sdk`](https://github.com/autohandai/code-agent-sdk-typescript) is a thin wrapper around Autohand Code. It does not expose the Weka decision endpoint directly yet.
+[`@autohandai/agent-sdk`](https://github.com/autohandai/code-agent-sdk-typescript)
+includes both Autohand Code agents and a direct, typed Weka client.
 
-The agent-assisted example uses the SDK to inspect a repository and return structured evidence. It then sends that bounded evidence to Weka with the local typed HTTP client:
+The agent-assisted example uses `Agent` to inspect a repository and return
+structured evidence, then sends that bounded evidence to Weka with
+`WekaClient` from the same SDK:
 
 ```text
 repository -> Code Agent SDK -> structured evidence -> Weka -> application policy
@@ -72,7 +77,9 @@ Tune thresholds on representative data before using them in production. Start wi
 ## Build your own example
 
 ```typescript
-import { decide } from './src/weka.js';
+import { WekaClient } from '@autohandai/agent-sdk';
+
+const weka = new WekaClient();
 
 const questions = {
   route: {
@@ -86,7 +93,7 @@ const questions = {
   },
 } as const;
 
-const result = await decide({
+const result = await weka.decide({
   model: 'weka',
   state: { testsPassed: true, risk: 'medium' },
   questions,
@@ -103,7 +110,8 @@ Good state is current, compact, redacted, and tied to one decision. Good criteri
 bun run check
 ```
 
-The test suite uses a local mocked `fetch`. It does not call the live API.
+The test suite injects a mocked `fetch` into the SDK client. It does not call
+the live API.
 
 ## Contributing
 

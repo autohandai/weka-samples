@@ -18,7 +18,7 @@
     "example:agent": "bun run src/examples/agent-assisted-release-gate.ts"
   },
   "dependencies": {
-    "@autohandai/agent-sdk": "^1.0.5"
+    "@autohandai/agent-sdk": "^1.1.0"
   },
   "devDependencies": {
     "@types/bun": "^1.3.14",

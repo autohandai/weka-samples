@@ -1,4 +1,4 @@
-import { decide } from '../weka.js';
+import { WekaClient } from '@autohandai/agent-sdk';
 
 const questions = {
   review_lane: {
@@ -13,18 +13,18 @@ const questions = {
   },
   regression_risk: {
     type: 'score',
-    instructions: 'Score regression risk from 0 for negligible to 100 for severe.',
-    min: 0,
-    max: 100,
-    legend: {
-      '0': 'Negligible',
-      '50': 'Material',
-      '100': 'Severe',
-    },
+    instructions: 'Score regression risk against these ordered anchors.',
+    criteria: [
+      'Negligible risk with direct evidence for the changed behavior.',
+      'Low risk with good evidence and a narrow impact area.',
+      'Material risk that calls for a monitored review.',
+      'High risk with missing evidence or broad impact.',
+      'Severe risk that should block the patch.',
+    ],
   },
 } as const;
 
-const result = await decide({
+const result = await new WekaClient().decide({
   model: 'weka',
   state: {
     task: 'Reject return URLs outside trusted Autohand origins.',

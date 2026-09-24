@@ -1,5 +1,6 @@
+import { WekaClient } from '@autohandai/agent-sdk';
+
 import { requireConfidence } from '../policy.js';
-import { decide } from '../weka.js';
 
 const questions = {
   release_lane: {
@@ -13,7 +14,7 @@ const questions = {
   },
 } as const;
 
-const result = await decide({
+const result = await new WekaClient().decide({
   model: 'weka',
   state: {
     tests: { passed: 842, failed: 0, flaky: 2 },

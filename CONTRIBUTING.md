@@ -7,7 +7,7 @@ Thanks for helping make Weka examples easier to use.
 1. Keep the example focused on one decision.
 2. Use synthetic, redacted fixtures. Do not commit API keys, production logs, or customer data.
 3. Keep the final policy in code. Low-confidence or incomplete evidence should route to review.
-4. Add or update a network-free test when you change the shared client.
+4. Add or update a network-free test when you change the SDK integration.
 5. Run `bun run check`.
 
 ## Proposing an example

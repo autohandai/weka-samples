@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
-import { decide, WekaRequestError } from '../src/weka.js';
+import { WekaClient, WekaRequestError } from '@autohandai/agent-sdk';
 
-describe('decide', () => {
+describe('WekaClient samples integration', () => {
   test('returns a typed choice answer', async () => {
     const questions = {
       route: {
@@ -12,27 +12,27 @@ describe('decide', () => {
     } as const;
     let capturedAuthorization = '';
 
-    const result = await decide(
-      { model: 'weka', state: { risk: 'medium' }, questions },
-      {
-        apiKey: 'test-key',
-        baseUrl: 'https://example.test',
-        fetch: async (_input, init) => {
-          capturedAuthorization = new Headers(init?.headers).get('authorization') ?? '';
-          return new Response(JSON.stringify({
-            model: 'weka',
-            answers: {
-              route: {
-                type: 'choice',
-                choice: 'review',
-                confidence: 0.82,
-                probabilities: { continue: 0.18, review: 0.82 },
-              },
+    const client = new WekaClient({
+      apiKey: 'test-key',
+      baseUrl: 'https://example.test',
+      fetch: async (_input, init) => {
+        capturedAuthorization = new Headers(init?.headers).get('authorization') ?? '';
+        return new Response(JSON.stringify({
+          model: 'weka',
+          answers: {
+            route: {
+              type: 'choice',
+              choice: 'review',
+              confidence: 0.82,
+              probabilities: { continue: 0.18, review: 0.82 },
             },
-          }), { status: 200, headers: { 'content-type': 'application/json' } });
-        },
+          },
+          usage: { input_tokens: 12, output_tokens: 4 },
+        }), { status: 200, headers: { 'content-type': 'application/json' } });
       },
-    );
+    });
+
+    const result = await client.decide({ model: 'weka', state: { risk: 'medium' }, questions });
 
     expect(capturedAuthorization).toBe('Bearer test-key');
     expect(result.answers.route.choice).toBe('review');
@@ -45,14 +45,12 @@ describe('decide', () => {
     );
 
     try {
-      await decide(
-        {
-          model: 'weka',
-          state: {},
-          questions: { stop: { type: 'noul', instructions: 'Stop?' } },
-        },
-        { apiKey: 'test-key', fetch: fetcher },
-      );
+      const client = new WekaClient({ apiKey: 'test-key', fetch: fetcher });
+      await client.decide({
+        model: 'weka',
+        state: {},
+        questions: { stop: { type: 'noul', instructions: 'Stop?' } },
+      });
       throw new Error('Expected decide to fail.');
     } catch (error) {
       expect(error).toBeInstanceOf(WekaRequestError);
@@ -63,16 +61,15 @@ describe('decide', () => {
   });
 
   test('rejects an unexpected response shape', async () => {
-    await expect(decide(
-      {
-        model: 'weka',
-        state: {},
-        questions: { stop: { type: 'noul', instructions: 'Stop?' } },
-      },
-      {
-        apiKey: 'test-key',
-        fetch: async () => new Response(JSON.stringify({ ok: true }), { status: 200 }),
-      },
-    )).rejects.toThrow('unexpected response shape');
+    const client = new WekaClient({
+      apiKey: 'test-key',
+      fetch: async () => new Response(JSON.stringify({ ok: true }), { status: 200 }),
+    });
+
+    await expect(client.decide({
+      model: 'weka',
+      state: {},
+      questions: { stop: { type: 'noul', instructions: 'Stop?' } },
+    })).rejects.toThrow('unexpected response shape');
   });
 });

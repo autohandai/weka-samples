@@ -1,5 +1,6 @@
+import { WekaClient } from '@autohandai/agent-sdk';
+
 import { requireConfidence } from '../policy.js';
-import { decide } from '../weka.js';
 
 const questions = {
   compatibility: {
@@ -14,7 +15,7 @@ const questions = {
   },
 } as const;
 
-const result = await decide({
+const result = await new WekaClient().decide({
   model: 'weka',
   state: {
     contract: { field: 'temperature_c', type: 'number', unit: 'celsius' },
